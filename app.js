@@ -7,10 +7,12 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const serveFavicon = require('serve-favicon');
-
+const expressSession    = require("express-session");
+const MongoStore = require('connect-mongo')(expressSession);
+const mongoose = require('mongoose');
 const indexRouter = require('./routes/index');
 const passportRouter = require("./routes/passport");
-
+const passport = require("passport");
 const app = express();
 
 // Setup view engine
@@ -32,6 +34,20 @@ app.use(sassMiddleware({
 
 app.use('/', indexRouter);
 app.use('/', passportRouter);
+
+app.use(expressSession({
+  secret: process.env.SESSION_SECRET,
+  cookie: { maxAge: 60 * 60 * 24 * 1000 },
+  resave: true,
+  saveUninitialized: false,
+  store: new MongoStore({
+    mongooseConnection: mongoose.connection,
+    ttl: 24 * 60 * 60
+  })
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Catch missing routes and forward to error handler
 app.use((req, res, next) => {
