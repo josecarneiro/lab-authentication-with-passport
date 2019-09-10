@@ -9,6 +9,13 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
+
+const signUpStatic = require('./user-sign-up-static');
+const loginStatic = require('./user-login-static');
+
+userSchema.statics.signUp = signUpStatic;
+userSchema.statics.login = loginStatic;
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
