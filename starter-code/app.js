@@ -7,10 +7,15 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const serveFavicon = require('serve-favicon');
-
+const passport = require('passport');
 const indexRouter = require('./routes/index');
 const passportRouter = require('./routes/passport');
+const expressSession = require('express-session');
+const mongoose = require('mongoose');
+const connectMongo = require('connect-mongo');
 
+const MongoStore = connectMongo(expressSession);
+const User = require('./models/user');
 const app = express();
 
 // Setup view engine
@@ -20,6 +25,50 @@ app.set('view engine', 'hbs');
 app.use(logger('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+//trying to keep cookies
+
+app.use(
+  expressSession({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 60 * 60 * 24 * 15,
+      sameSite: true,
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== 'development'
+    },
+    store: new MongoStore({
+      mongooseConnection: mongoose.connection,
+      ttl: 60 * 60 * 24
+    })
+  })
+);
+
+// app.use((req, res, next) => {
+//   let userId = req.session._id;
+//   if (userId) {
+//     User.findById(userId)
+//       .then(user => {
+//         req.user = user;
+//         // Set the user in the response locals, so it can be accessed from any view
+//         res.locals.user = req.user;
+//         // Go to the next middleware/controller
+//         next();
+//       })
+//       .catch(error => {
+//         next(error);
+//       });
+//   } else {
+//     // If there isn't a userId saved in the session,
+//     // go to the next middleware/controller
+//     next();
+//   }
+// });
+
+// sdasdasdasdasdas
+
 app.use(
   sassMiddleware({
     src: join(__dirname, 'public'),
@@ -31,6 +80,15 @@ app.use(
 );
 app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
 app.use(express.static(join(__dirname, 'public')));
+
+//trying to work with passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+}); // this will make passport.seession work
 
 app.use('/', indexRouter);
 app.use('/', passportRouter);
