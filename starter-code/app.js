@@ -7,6 +7,12 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const serveFavicon = require('serve-favicon');
+const passport = require('passport');
+const mongoose = require('mongoose');
+const expressSession = require('express-session');
+const connectMongo = require('connect-mongo');
+
+const MongoStore = connectMongo(expressSession);
 
 const indexRouter = require('./routes/index');
 const passportRouter = require('./routes/passport');
@@ -29,6 +35,36 @@ app.use(
     sourceMap: false
   })
 );
+
+app.use(
+  expressSession({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 60 * 60 * 24 * 15,
+      sameSite: true,
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== 'development'
+    },
+    store: new MongoStore({
+      mongooseConnection: mongoose.connection,
+      ttl: 60 * 60 * 24
+    })
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+});
+
+require('./configure-passport');
+
+
 app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
 app.use(express.static(join(__dirname, 'public')));
 
