@@ -1,10 +1,28 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>{{title}}</title>
-    <link rel='stylesheet' href='/styles/style.css' />
-  </head>
-  <body>
-    {{{body}}}
-  </body>
+
+<head>
+  <title>{{title}}</title>
+  <link rel='stylesheet' href='/styles/style.css' />
+</head>
+
+<body>
+
+  <nav>
+    <a href="/">Home</a>
+    {{!-- Display relevant routes for non-authenticated vs. authenticated user --}}
+    {{#if user}}
+    <a href="/">{{user.username}}'s Profile</a>
+    <form action="/signout" method="POST">
+      <a href="/signout">Sign Out</a>
+    </form>
+    {{else}}
+    <a href="/login">Sign In</a>
+    <a href="/signup">Sign Up</a>
+    {{/if}}
+  </nav>
+
+  {{{body}}}
+</body>
+
 </html>
