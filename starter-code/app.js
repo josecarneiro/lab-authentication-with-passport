@@ -10,8 +10,84 @@ const serveFavicon = require('serve-favicon');
 
 const indexRouter = require('./routes/index');
 const passportRouter = require('./routes/passport');
+const User = require('./models/user');
 
 const app = express();
+
+const session = require("express-session");
+const bcryptjs = require("bcryptjs");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+
+
+app.use(session({
+  secret: "our-passport-local-strategy-app",
+  resave: true,
+  saveUninitialized: true
+}));
+
+passport.serializeUser((user, cb) => {
+  cb(null, user._id);
+});
+
+passport.deserializeUser((id, cb) => {
+  User.findById(id)
+    .then(user => {
+      cb(null, user);
+    })
+    .catch(error => {
+      cb(error);
+    });
+});
+
+passport.use(
+  'signup',
+  new LocalStrategy( (username, password, cb) => {
+    bcryptjs
+      .hash(password, 10)
+      .then(hash => {
+        return User.create({
+          username,
+          passwordHash: hash
+        });
+      })
+      .then(user => {
+        cb(null, user);
+      })
+      .catch(error => {
+        // ...
+        cb(error);
+      });
+  })
+);
+
+// passport.use(
+//   'sign-in',
+//   new LocalStrategy({ usernameField: 'email' }, (email, password, cb) => {
+//     let user;
+//     User.findOne({
+//       email
+//     })
+//       .then(document => {
+//         user = document;
+//         return bcryptjs.compare(password, user.passwordHash);
+//       })
+//       .then(passwordMatchesHash => {
+//         if (passwordMatchesHash) {
+//           cb(null, user);
+//         } else {
+//           cb(new Error('Passwords dont match'));
+//         }
+//       })
+//       .catch(error => {
+//         cb(error);
+//       });
+//   })
+// );
+
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Setup view engine
 app.set('views', join(__dirname, 'views'));
