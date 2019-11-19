@@ -4,7 +4,21 @@
     <title>{{title}}</title>
     <link rel='stylesheet' href='/styles/style.css' />
   </head>
+
   <body>
+    <nav>
+      <a href="/">Home</a>
+      {{#if user}}
+        <a href="/">{{user.name}}'s Profile</a>
+        <form action="/sign-out" method="POST">
+          <button>Sign Out</button>
+        </form>
+        {{else}}
+        <a href="/login">Sign In</a>
+        <a href="/signup">Sign Up</a>
+      {{/if}}
+    </nav>
     {{{body}}}
   </body>
+
 </html>
