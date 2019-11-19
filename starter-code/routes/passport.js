@@ -16,7 +16,7 @@ const LocalStrategy = require("passport-local").Strategy;
 
 const ensureLogin = require("connect-ensure-login");
 
-/*passportRouter.get(
+passportRouter.get(
   "/private-page",
   ensureLogin.ensureLoggedIn(),
   (req, res, next) => {
@@ -25,11 +25,11 @@ const ensureLogin = require("connect-ensure-login");
       user
     });
   }
-);*/
+);
 
-passportRouter.get("/private-page", (req, res, next) => {
+/*passportRouter.get("/private-page", (req, res, next) => {
   res.render("passport/private");
-});
+}); */
 
 passportRouter.get("/signup", (req, res, next) => {
   res.render("passport/signup");
