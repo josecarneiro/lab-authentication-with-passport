@@ -15,6 +15,8 @@ const mongoose = require('mongoose');
 const expressSession = require('express-session');
 const connectMongo = require('connect-mongo');
 const MongoStore = connectMongo(expressSession);
+require('./passport-config');
+const passport = require('passport');
 
 // Import routes -- mounted at end of file
 const indexRouter = require('./routes/index');
@@ -27,6 +29,7 @@ app.set('views', join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 hbs.registerPartials(join(__dirname, '/views/partials'));
 
+// Middleware
 app.use(logger('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -63,9 +66,7 @@ app.use(
 
 // Passport configuration
 
-require('./passport-config');
 
-const passport = require('passport');
 
 app.use(passport.initialize());
 app.use(passport.session());

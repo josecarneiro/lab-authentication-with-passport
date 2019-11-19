@@ -24,6 +24,7 @@ passport.deserializeUser((id, callback) => {
     });
 });
 
+// Set different strategies
 // Use local passport authentication method
 passport.use(
   'signup',
@@ -48,11 +49,11 @@ passport.use(
 );
 
 passport.use(
-  'signin',
-  new LocalStrategy({ usernameField: 'email' }, (email, password, callback) => {
+  'login',
+  new LocalStrategy((username, password, callback) => {
     let user;
     User.findOne({
-      email
+      username
     })
       .then(document => {
         user = document;

@@ -9,4 +9,36 @@ body {
 
 a {
   color: $link-color;
+  text-decoration: none;
+}
+
+nav {
+  display: flex;
+  justify-content: flex-end;
+  a {
+    padding: 1em;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  align-items: center;
+  label {
+    font-size: 2em;
+    font-weight: 500;
+  }
+  input, button {
+    width: 16em;
+    padding: 1em;
+    margin: 0.25em;
+    border: 1px solid grey;
+    border-radius: 3px;
+    box-shadow: 6px 6px 6px rgb(219, 219, 219);
+  }
+  button {
+    width: 18em;
+    background-color: white;
+  }
 }
