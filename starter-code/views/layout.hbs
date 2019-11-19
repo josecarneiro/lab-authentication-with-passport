@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>{{title}}</title>
-    <link rel='stylesheet' href='/styles/style.css' />
-  </head>
-  <body>
-    {{{body}}}
-  </body>
+
+<head>
+  <title>{{title}}</title>
+  <link rel='stylesheet' href='/styles/style.css' />
+</head>
+
+<body>
+  {{#if user}}
+  <h3>congrats ur a user</h3>
+  <form action="/sign-out" method="POST"><button>Sign Out</button></form>
+  {{else}}
+  <a href="/signup"> sign up</a> <a href="/signin"> sign in</a>
+  {{/if}}
+  {{{body}}}
+</body>
+
 </html>
