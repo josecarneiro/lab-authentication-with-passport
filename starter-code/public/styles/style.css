@@ -1,0 +1,33 @@
+body {
+  margin: 0;
+  padding: 50px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+a {
+  color: #00b7ff;
+  text-decoration: none; }
+
+nav {
+  display: flex;
+  justify-content: flex-end; }
+  nav a {
+    padding: 1em; }
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: auto;
+  align-items: center; }
+  form label {
+    font-size: 2em;
+    font-weight: 500; }
+  form input, form button {
+    width: 16em;
+    padding: 1em;
+    margin: 0.25em;
+    border: 1px solid grey;
+    border-radius: 3px;
+    box-shadow: 6px 6px 6px #dbdbdb; }
+  form button {
+    width: 18em;
+    background-color: white; }
