@@ -12,6 +12,11 @@ const passport = require("passport");
 
 const ensureLogin = require('connect-ensure-login');
 
+const session = require("express-session");
+const LocalStrategy = require("passport-local").Strategy;
+
+
+
 passportRouter.get(
   '/private-page',
   ensureLogin.ensureLoggedIn(),
@@ -29,7 +34,7 @@ passportRouter.get('/signup', (req, res, next) => {
 
 passportRouter.post('/signup',
   passport.authenticate('/signup', {
-    successRedirect: '/',
+    successRedirect: '/login',
     failureRedirect: '/signup'
   })
 );
@@ -38,10 +43,9 @@ passportRouter.get('/login', (req, res, next) => {
   res.render('passport/login');
 });
 
-passportRouter.post(
-  '/login',
-  passport.authenticate('login', {
-    successRedirect: '/',
+passportRouter.post('/login',
+  passport.authenticate('/login', {
+    successRedirect: '/private-page',
     failureRedirect: '/login'
   })
 );
@@ -50,5 +54,66 @@ passportRouter.post(
 //   req.logout();
 //   res.redirect('/');
 // });
+
+passport.serializeUser((user, cb) => {
+  cb(null, user._id);
+});
+
+passport.deserializeUser((id, cb) => {
+  User.findById(id)
+    .then(user => {
+      cb(null, user);
+    })
+    .catch(error => {
+      cb(error);
+    });
+});
+
+passport.use(
+  '/signup',
+  new LocalStrategy( (username, password, cb) => {
+    bcryptjs
+      .hash(password, 10)
+      .then(hash => {
+        return User.create({
+          username,
+          passwordHash: hash
+        });
+      })
+      .then(user => {
+        cb(null, user);
+      })
+      .catch(error => {
+        // ...
+        cb(error);
+      });
+  })
+);
+
+passport.use(
+  '/login',
+  new LocalStrategy( (username, password, cb) => {
+    let user;
+    User.findOne({
+      username
+    })
+      .then(document => {
+        user = document;
+        return bcryptjs.compare(password, user.passwordHash);
+      })
+      .then(passwordMatchesHash => {
+        if (passwordMatchesHash) {
+          cb(null, user);
+        } else {
+          cb(new Error('Passwords dont match'));
+        }
+      })
+      .catch(error => {
+        cb(error);
+      });
+  })
+);
+
+
 
 module.exports = passportRouter;
