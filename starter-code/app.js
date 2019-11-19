@@ -32,6 +32,51 @@ app.use(
 app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
 app.use(express.static(join(__dirname, 'public')));
 
+const mongoose = require('mongoose');
+const expressSession = require('express-session');
+const connectMongo = require('connect-mongo');
+const MongoStore = connectMongo(expressSession);
+
+app.use(
+  expressSession({
+    secret: process.env.SESSION_SECRET,
+    resave:true,
+    saveUninitialized: true,
+    cookie:{
+      maxAge: 60*60*24*15,
+      secure: process.env.NODE_ENV !=='development',
+      sameSite: true,
+      httpOnly: true
+    },
+    store: new MongoStore({
+      mongooseConnection: mongoose.connection,
+      ttl: 60 * 60 * 24
+    })
+  })
+);
+
+const passport = require('passport');
+const User = require('./models/user');
+
+passport.serializeUser((user, callback) => {
+  callback(null, user._id);
+});
+
+passport.deserializeUser((id, callback) => {
+  User.findById(id)
+    .then(user => {
+      callback(null, user);
+    })
+    .catch(error => {
+      callback(error);
+    });
+});
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+
 app.use('/', indexRouter);
 app.use('/', passportRouter);
 
