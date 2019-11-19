@@ -32,6 +32,14 @@ app.use(
 app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
 app.use(express.static(join(__dirname, 'public')));
 
+
+
+
+
+
+
+
+
 app.use('/', indexRouter);
 app.use('/', passportRouter);
 
