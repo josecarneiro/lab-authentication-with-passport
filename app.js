@@ -6,9 +6,14 @@ const createError = require('http-errors');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const serveFavicon = require('serve-favicon');
-
+const mongoose = require('mongoose');
+const expressSession = require('express-session');
+const ConnectMongo = require('connect-mongo');
 const indexRouter = require('./routes/index');
 const passportRouter = require('./routes/passport');
+const mongoStore = ConnectMongo(expressSession);
+const passport = require('passport');
+//const authenticationRouter = require('./routes/authentication');
 
 const app = express();
 
@@ -30,9 +35,13 @@ app.use(
 app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
 app.use(express.static(join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/', passportRouter);
+require('./passport-config');
 
+app.use('/', indexRouter);
+app.use('/passport', passportRouter);
+
+app.use(passport.initialize());
+app.use(passport.session());
 // Catch missing routes and forward to error handler
 app.use((req, res, next) => {
   next(createError(404));
