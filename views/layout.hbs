@@ -5,6 +5,19 @@
     <link rel='stylesheet' href='/styles/style.css' />
   </head>
   <body>
+     <nav>
+      <a href="/">Home</a>
+      {{#if user}}
+        <a href="/">Profile</a>
+        <a href="/passport/private-page">Private Page</a>
+        <form action="/passport/sign-out" method="POST">
+          <button>Log Out</button>
+        </form>
+      {{else}}
+        <a href="/passport/sign-in">Sign In</a>
+        <a href="/passport/sign-up">Sign Up</a>
+      {{/if}}
+    </nav>
     {{{body}}}
   </body>
 </html>
