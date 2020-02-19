@@ -1,5 +1,9 @@
-$font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $link-color: #00b7ff;
+
+// * {
+//   outline: 1px solid red;
+// }
 
 body {
   margin: 0;
@@ -9,4 +13,45 @@ body {
 
 a {
   color: $link-color;
+  text-decoration: none;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  a,
+  button {
+    margin-right: 1em;
+    font-size: 1em;
+  }
+  button {
+    border-color: lightgray;
+    color: black;
+    padding: 0.5em;
+    font-size: 0.9em;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  label {
+    margin-bottom: 0.8em;
+  }
+  input {
+    margin-bottom: 2em;
+    font-size: 1em;
+    max-width: 20em;
+    padding: 0.5em 0.2em;
+  }
+}
+
+.form-btn {
+  font-size: 1em;
+  width: 6em;
+  padding: 0.8em;
+  background-color: transparent;
+  &:hover {
+    background-color: lightgray;
+  }
 }
