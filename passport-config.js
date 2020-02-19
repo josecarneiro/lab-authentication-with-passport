@@ -31,7 +31,7 @@ const signInStrategy = new PassportLocalStrategy({}, (username, password, callba
     .then(document => {
       user = document;
       if (document) {
-        return bcryptjs.compare(password, user.passwordHashAndSalt);
+        return bcryptjs.compare(password, user.passwordHash);
       } else {
         return Promise.reject(new Error('USER_DOES_NOT_EXIST'));
       }
@@ -63,7 +63,7 @@ const signUpStrategy = new PassportLocalStrategy({}, (username, password, callba
     .then(hashAndSalt => {
       return User.create({
         username,
-        passwordHashAndSalt: hashAndSalt
+        passwordHash: hashAndSalt
       });
     })
     .then(user => {
