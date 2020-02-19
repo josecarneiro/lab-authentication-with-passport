@@ -11,6 +11,21 @@ const User = require('./models/user');
 // Strategy for sign up
 // Tell passport how to serialize user
 // Tell passport how to deserialize user
+passport.serializeUser((user, callback) => {
+  callback(null, user._id);
+});
+
+passport.deserializeUser((id, callback) => {
+  User.findById(id)
+    .then(user => {
+      callback(null, user);
+    })
+    .catch(error => {
+      callback(error);
+    });
+});
+
+
 
 const signInStrategy = new PassportLocalStrategy({}, (username, password, callback) => {
   let user;

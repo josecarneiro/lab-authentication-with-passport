@@ -16,7 +16,7 @@ passportRouter.post(
   '/sign-in',
   passport.authenticate('sign-in',{
     successRedirect: '/',
-    failureRedirect: '/passport/sign-in'
+    failureRedirect: '/authentication/sign-in'
   })
 );
 
@@ -25,10 +25,11 @@ passportRouter.get('/sign-up', (req, res, next) => {
   res.render('passport/sign-up');
 });
 
-passportRouter.post('/sign-up',
+passportRouter.post(
+  '/sign-up',
 passport.authenticate('sign-up',{
   successRedirect: '/',
-  failureRedirect: '/passport/sign-up'
+  failureRedirect: '/authentication/sign-up'
   })
 );
 
