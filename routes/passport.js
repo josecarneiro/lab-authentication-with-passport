@@ -42,4 +42,9 @@ passportRouter.get('/private-page', ensureLogin.ensureLoggedIn(), (req, res, nex
   });
 });
 
+passportRouter.post('/sign-out', (req, res, next) => {
+  req.logout();
+  res.redirect('/');
+});
+
 module.exports = passportRouter;
