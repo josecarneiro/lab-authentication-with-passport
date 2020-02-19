@@ -8,6 +8,7 @@ const sassMiddleware = require('node-sass-middleware');
 const serveFavicon = require('serve-favicon');
 
 const indexRouter = require('./routes/index');
+const passport = require('passport');
 const passportRouter = require('./routes/passport');
 
 const app = express();
@@ -29,6 +30,11 @@ app.use(
 );
 app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
 app.use(express.static(join(__dirname, 'public')));
+
+require('./passport-config');
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/', passportRouter);
