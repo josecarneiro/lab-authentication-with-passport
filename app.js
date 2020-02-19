@@ -6,6 +6,13 @@ const createError = require('http-errors');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const serveFavicon = require('serve-favicon');
+const passUser = require('./middleware/pass-user');
+const mongoose = require('mongoose');
+const expressSession = require('express-session');
+const ConnectMongo = require('connect-mongo');
+const mongoStore = ConnectMongo(expressSession);
+const passport = require('passport');
+const hbs = require('hbs');
 
 const indexRouter = require('./routes/index');
 const passportRouter = require('./routes/passport');
@@ -29,6 +36,28 @@ app.use(
 );
 app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
 app.use(express.static(join(__dirname, 'public')));
+hbs.registerPartials(join(__dirname, 'views/partials'));
+
+app.use(
+  expressSession({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 15 * 24 * 60 * 60 * 1000
+    },
+    store: new mongoStore({
+      mongooseConnection: mongoose.connection,
+      ttl: 60 * 60
+    })
+  })
+);
+
+// Initiate passport middleware before mounting routers and after mounting express-session
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(passUser);
 
 app.use('/', indexRouter);
 app.use('/', passportRouter);
