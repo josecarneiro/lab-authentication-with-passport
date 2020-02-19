@@ -1,10 +1,30 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>{{title}}</title>
-    <link rel='stylesheet' href='/styles/style.css' />
-  </head>
-  <body>
-    {{{body}}}
-  </body>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/styles/style.css" />
+</head>
+
+<body>
+  <nav>
+    <a href="/">Home</a>
+    {{#if user}}
+    <a href="/">Profile</a>
+    <a href="/private">Private Page</a>
+    <form action="/passport/sign-out" method="POST">
+      <button>Log Out</button>
+    </form>
+    {{else}}
+    <a href="/passport/sign-in">Sign In</a>
+    <a href="/passport/sign-up">Sign Up</a>
+    {{/if}}
+  </nav>
+  {{{body}}}
+  <script src="/scripts/script.js"></script>
+</body>
+
 </html>
