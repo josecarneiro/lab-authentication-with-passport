@@ -15,6 +15,7 @@ const User = require('./models/user');
 // Tell passport how to deserialize user
 
 passport.serializeUser((user, callback) => {
+  console.log(user)
   callback(null, user._id);
 });
 
@@ -47,6 +48,7 @@ const signUpStrategy = new PassportLocalStrategy({}, (username, password, callba
     })
     .then(user => {
       // User was successfully created
+      //console.log(user)
       callback(null, user);
     })
     .catch(error => {
@@ -73,6 +75,7 @@ const signInStrategy = new PassportLocalStrategy({}, (username, password, callba
     })
     .then(passwordMatches => {
       if (passwordMatches) {
+        //console.log(user)
         callback(null, user);
       } else {
         return Promise.reject(new Error('PASSWORD_DOES_NOT_MATCH'));

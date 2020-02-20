@@ -10,6 +10,7 @@ const passport = require('passport');
 const passUserToTemplate = require('./middleware/pass-user-to-template')
 const indexRouter = require('./routes/index');
 const passportRouter = require('./routes/passport');
+const cookieParser = require("cookie-parser")
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser())
 app.use(
   sassMiddleware({
     src: join(__dirname, 'public'),
@@ -31,12 +33,37 @@ app.use(
 app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
 app.use(express.static(join(__dirname, 'public')));
 
+const mongoose = require('mongoose');
+const expressSession = require('express-session');
+const connectMongo = require('connect-mongo');
+const MongoStore = connectMongo(expressSession);
+app.use(
+  expressSession({
+    secret: process.env.SESSION_SECRET,
+    resave:true,
+    saveUninitialized: false,
+    cookie:{
+      maxAge: 60*60*24*15,
+      secure: process.env.NODE_ENV !=='development',
+      sameSite: true,
+      httpOnly: true
+    },
+    store: new MongoStore({
+      mongooseConnection: mongoose.connection,
+      ttl: 60 * 60 * 24
+    })
+  })
+);
+
+
 require('./configure-passport');
+
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(passUserToTemplate);
+
 /*
 app.use((req, res, next) => {
   res.locals.user = req.user;

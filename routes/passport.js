@@ -36,9 +36,14 @@ passportRouter.get('/sign-in', (req, res, next) => {
 });
 
 passportRouter.post('/sign-in', passport.authenticate('sign-in', {
-    successRedirect: '/',
+    successRedirect: '/private',
     failureRedirect: '/sign-in'
   })
 );
+
+passportRouter.post('/sign-out', (req, res, next) => {
+  req.logOut();
+  res.redirect('/')
+});
 
 module.exports = passportRouter;
