@@ -102,4 +102,16 @@ passportRouter.post(
   })
 );
 
+passportRouter.get('/sign-in', (req, res, next) => {
+  res.render('passport/sign-in');
+});
+
+passportRouter.post(
+  '/sign-in',
+  passport.authenticate('sign-in', {
+    successRedirect: '/',
+    failureRedirect: '/sign-in'
+  })
+);
+
 module.exports = passportRouter;
