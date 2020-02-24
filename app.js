@@ -6,6 +6,11 @@ const createError = require('http-errors');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const serveFavicon = require('serve-favicon');
+const passport = require('passport');
+const mongoose = require('mongoose');
+const expressSession = require('express-session');
+const ConnectMongo = require('connect-mongo');
+const mongoStore = ConnectMongo(expressSession);
 
 const indexRouter = require('./routes/index');
 const passportRouter = require('./routes/passport');
@@ -29,6 +34,9 @@ app.use(
 );
 app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
 app.use(express.static(join(__dirname, 'public')));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/', passportRouter);
