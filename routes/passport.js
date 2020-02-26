@@ -1,13 +1,37 @@
 'use strict';
 
 const { Router } = require('express');
-const passportRouter = Router();
-
-// Require user model
-
-// Add bcrypt to encrypt passwords
+const passportRouter = new Router();
 
 // Add passport
+const passport = require('passport');
+
+
+//SIGN IN:
+passportRouter.get('/sign-in', (req, res, next) => {
+  res.render('passport/sign-in');
+});
+
+passportRouter.post(
+  '/sign-in',
+  passport.authenticate('sign-in',{
+    successRedirect: '/',
+    failureRedirect: '/authentication/sign-in'
+  })
+);
+
+//SIGN UP
+passportRouter.get('/sign-up', (req, res, next) => {
+  res.render('passport/sign-up');
+});
+
+passportRouter.post(
+  '/sign-up',
+passport.authenticate('sign-up',{
+  successRedirect: '/',
+  failureRedirect: '/authentication/sign-up'
+  })
+);
 
 const ensureLogin = require('connect-ensure-login');
 
@@ -16,6 +40,11 @@ passportRouter.get('/private-page', ensureLogin.ensureLoggedIn(), (req, res, nex
   res.render('passport/private', {
     user
   });
+});
+
+passportRouter.post('/sign-out', (req, res, next) => {
+  req.logout();
+  res.redirect('/');
 });
 
 module.exports = passportRouter;
