@@ -6,6 +6,12 @@ const createError = require('http-errors');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const serveFavicon = require('serve-favicon');
+const bindUserToLocal = require('./middleware/bind-user-to-view-locals');
+
+//CONNECT PASSPORT API TO LAB------------------------------------
+const passport = require('passport');
+require('./configure-passport');
+//--------------------------------------------------------------
 
 const indexRouter = require('./routes/index');
 const authenticationRouter = require('./routes/authentication');
@@ -30,6 +36,11 @@ app.use(
 app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
 app.use(express.static(join(__dirname, 'public')));
 
+//PASSPORT INITIALIZE--------------------------------------------------
+app.use(passport.initialize());
+app.use(passport.session());
+//---------------------------------------------------------------------
+app.use(bindUserToLocal);
 app.use('/', indexRouter);
 app.use('/authentication', authenticationRouter);
 
