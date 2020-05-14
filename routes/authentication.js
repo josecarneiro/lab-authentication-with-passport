@@ -4,6 +4,25 @@ const { Router } = require('express');
 const authenticationRouter = Router();
 const passport = require('passport');
 
+//GITHUB----------------------------------------------------------------------
+authenticationRouter.get(
+  '/github',
+  passport.authenticate('github', {
+    successRedirect: '/',
+    failureRedirect: '/error'
+  })
+);
+
+authenticationRouter.get(
+  '/github-callback',
+  passport.authenticate('github', {
+    successRedirect: '/',
+    failureRedirect: '/error'
+  })
+);
+
+//------------------------------------------------------------------------
+
 authenticationRouter.get('/sign-up', (req, res, next) => {
   res.render('authentication/sign-up');
 });

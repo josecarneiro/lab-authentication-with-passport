@@ -3,6 +3,8 @@
 
 {{#if user}}
 <p>Welcome {{user.username}}</p>
+<p>You connected with this lab!</p>
+<img src="{{ user.photo }}">
 {{else}}
 <p>Welcome to {{title}}</p>
 {{/if}}
