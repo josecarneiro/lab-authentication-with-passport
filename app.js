@@ -13,6 +13,8 @@ const sassMiddleware = require('node-sass-middleware');
 const serveFavicon = require('serve-favicon');
 const bindUserToLocal = require('./middleware/bind-user-to-view-locals');
 
+//const routeguard = require('./middleware/route-guard');
+
 //CONNECT PASSPORT API TO LAB------------------------------------
 const passport = require('passport');
 require('./configure-passport');
@@ -63,6 +65,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 //---------------------------------------------------------------------
+//app.use(routeguard);
 app.use(bindUserToLocal);
 app.use('/', indexRouter);
 app.use('/authentication', authenticationRouter);
