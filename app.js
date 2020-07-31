@@ -2,10 +2,23 @@
 
 const { join } = require('path');
 const express = require('express');
+
+const expressSession = require('express-session');
+
+const connectMongo = require('connect-mongo');
+const mongoose = require('mongoose');
 const createError = require('http-errors');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
 const serveFavicon = require('serve-favicon');
+const bindUserToLocal = require('./middleware/bind-user-to-view-locals');
+
+//const routeguard = require('./middleware/route-guard');
+
+//CONNECT PASSPORT API TO LAB------------------------------------
+const passport = require('passport');
+require('./configure-passport');
+//--------------------------------------------------------------
 
 const indexRouter = require('./routes/index');
 const authenticationRouter = require('./routes/authentication');
@@ -30,6 +43,30 @@ app.use(
 app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
 app.use(express.static(join(__dirname, 'public')));
 
+app.use(
+  expressSession({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 60 * 60 * 24 * 15,
+      sameSite: 'lax',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production'
+    },
+    store: new (connectMongo(expressSession))({
+      mongooseConnection: mongoose.connection,
+      ttl: 60 * 60 * 24
+    })
+  })
+);
+
+//PASSPORT INITIALIZE--------------------------------------------------
+app.use(passport.initialize());
+app.use(passport.session());
+//---------------------------------------------------------------------
+//app.use(routeguard);
+app.use(bindUserToLocal);
 app.use('/', indexRouter);
 app.use('/authentication', authenticationRouter);
 
